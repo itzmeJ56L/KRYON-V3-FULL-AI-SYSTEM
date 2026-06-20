@@ -5,11 +5,13 @@ local RunService = game:GetService("RunService")
 ------------------------------------------------
 -- 🤖 CREATE NPC
 ------------------------------------------------
-local npc = Instance.new("Model")
-npc.Name = "Kryon"
+local ServerStorage = game:GetService("ServerStorage")
 
-local humanoid = Instance.new("Humanoid")
-humanoid.Parent = npc
+local npc = ServerStorage:WaitForChild("Kryon"):Clone()
+npc.Parent = workspace
+
+local humanoid = npc:WaitForChild("Humanoid")
+local root = npc:WaitForChild("HumanoidRootPart")
 
 local root = Instance.new("Part")
 root.Name = "HumanoidRootPart"
