@@ -1,0 +1,99 @@
+local Players = game:GetService("Players")
+local PathfindingService = game:GetService("PathfindingService")
+local RunService = game:GetService("RunService")
+
+------------------------------------------------
+-- 🤖 CREATE NPC
+------------------------------------------------
+local npc = Instance.new("Model")
+npc.Name = "Kryon"
+
+local humanoid = Instance.new("Humanoid")
+humanoid.Parent = npc
+
+local root = Instance.new("Part")
+root.Name = "HumanoidRootPart"
+root.Size = Vector3.new(2,2,1)
+root.Anchored = false
+root.Parent = npc
+
+npc.PrimaryPart = root
+npc.Parent = workspace
+
+root.Position = Vector3.new(0,5,0)
+
+------------------------------------------------
+-- 🎮 STATE
+------------------------------------------------
+local mode = "follow"
+
+------------------------------------------------
+-- 🚶 FOLLOW SYSTEM (REAL PATHFINDING)
+------------------------------------------------
+local function followPlayer(target)
+	if not target then return end
+
+	local path = PathfindingService:CreatePath()
+	path:ComputeAsync(root.Position, target.Position)
+
+	if path.Status == Enum.PathStatus.Success then
+		for _, waypoint in pairs(path:GetWaypoints()) do
+			humanoid:MoveTo(waypoint.Position)
+			humanoid.MoveToFinished:Wait()
+		end
+	end
+end
+
+------------------------------------------------
+-- 🔄 MAIN LOOP
+------------------------------------------------
+RunService.Heartbeat:Connect(function()
+	for _, player in pairs(Players:GetPlayers()) do
+		local char = player.Character
+		if not char then return end
+
+		local hrp = char:FindFirstChild("HumanoidRootPart")
+		if not hrp then return end
+
+		-- UI CONTROL HOOKS
+		if _G.KryonFollow == false then return end
+
+		if mode == "follow" then
+			local dist = (root.Position - hrp.Position).Magnitude
+
+			if dist > 10 then
+				followPlayer(hrp)
+			else
+				humanoid:MoveTo(hrp.Position + Vector3.new(2,0,2))
+			end
+
+		elseif mode == "come" then
+			humanoid:MoveTo(hrp.Position)
+
+		elseif mode == "stop" then
+			humanoid:MoveTo(root.Position)
+		end
+	end
+end)
+
+------------------------------------------------
+-- 💬 CHAT CONNECTION (OPTIONAL HOOK)
+------------------------------------------------
+Players.PlayerAdded:Connect(function(plr)
+	plr.Chatted:Connect(function(msg)
+		msg = string.lower(msg)
+
+		if msg:find("follow") then
+			mode = "follow"
+
+		elseif msg:find("come") then
+			mode = "come"
+
+		elseif msg:find("stop") then
+			mode = "stop"
+
+		elseif msg:find("jump") then
+			humanoid.Jump = true
+		end
+	end)
+end)
