@@ -55,8 +55,6 @@ RunService.Heartbeat:Connect(function()
 		local hrp = char:FindFirstChild("HumanoidRootPart")
 		if not hrp then return end
 
-		-- UI CONTROL HOOKS
-		if _G.KryonFollow == false then return end
 
 		if mode == "follow" then
 			local dist = (root.Position - hrp.Position).Magnitude
