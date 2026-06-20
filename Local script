@@ -1,0 +1,72 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local gui = script.Parent
+local frame = gui:WaitForChild("MainFrame")
+
+local aiEnabled = true
+local followEnabled = true
+local parkourMode = false
+
+------------------------------------------------
+-- 🪟 DRAG SYSTEM
+------------------------------------------------
+local dragging = false
+local dragInput, dragStart, startPos
+
+frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+
+frame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if dragging and input == dragInput then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+------------------------------------------------
+-- 🔘 TOGGLES
+------------------------------------------------
+local function toggle(btn, stateText)
+	btn.Text = stateText
+end
+
+frame.AIToggle.MouseButton1Click:Connect(function()
+	aiEnabled = not aiEnabled
+	toggle(frame.AIToggle, aiEnabled and "AI: ON" or "AI: OFF")
+	_G.KryonAIEnabled = aiEnabled
+end)
+
+frame.FollowToggle.MouseButton1Click:Connect(function()
+	followEnabled = not followEnabled
+	toggle(frame.FollowToggle, followEnabled and "FOLLOW: ON" or "FOLLOW: OFF")
+	_G.KryonFollow = followEnabled
+end)
+
+frame.ParkourToggle.MouseButton1Click:Connect(function()
+	parkourMode = not parkourMode
+	toggle(frame.ParkourToggle, parkourMode and "PARKOUR: ON" or "PARKOUR: OFF")
+	_G.KryonParkour = parkourMode
+end)
