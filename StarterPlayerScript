@@ -1,0 +1,156 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local Knowledge = require(game.ReplicatedStorage:WaitForChild("KryonKnowledge"))
+
+------------------------------------------------
+-- 🧠 QUESTION ANALYZER
+------------------------------------------------
+local function analyzeQuestion(msg)
+	msg = string.lower(msg)
+
+	if msg:find("who") then return "identity" end
+	if msg:find("what") then return "info" end
+	if msg:find("where") then return "location" end
+	if msg:find("when") then return "time" end
+	if msg:find("why") then return "reason" end
+	if msg:find("how") then return "method" end
+
+	return nil
+end
+
+------------------------------------------------
+-- 🧠 AI BRAIN (NO REPETITION + SMART FLOW)
+------------------------------------------------
+local lastMsg = ""
+local lastTime = 0
+
+local function aiBrain(msg)
+	msg = string.lower(msg)
+
+	-- 🛑 anti spam / repetition fix
+	if msg == lastMsg and tick() - lastTime < 1.2 then
+		return nil
+	end
+
+	lastMsg = msg
+	lastTime = tick()
+
+	-- 🧠 QUESTION TYPES
+	local qType = analyzeQuestion(msg)
+
+	if qType == "identity" then
+		return "You're asking about identity. Can you be more specific?"
+
+	elseif qType == "info" then
+		return "You're asking for information. I'll explain it."
+
+	elseif qType == "location" then
+		return "You're asking about a place. Tell me more."
+
+	elseif qType == "time" then
+		return "Current time is " .. os.date("%I:%M %p")
+
+	elseif qType == "reason" then
+		return "You're asking why. Let's analyze it."
+
+	elseif qType == "method" then
+		return "You're asking how. I'll explain step by step."
+	end
+
+	-- 📚 knowledge system
+	local info = Knowledge:Get(msg)
+	if info then
+		return info .. " Want tips?"
+	end
+
+	-- 🎮 trending / general games
+	if msg:find("popular") then
+		return "Popular games include MM2, TSB, Rivals, Arsenal, Doors, and Blox Fruits."
+	end
+
+	if msg:find("old roblox") then
+		return "Old Roblox focused on obbies, roleplay, and simple games."
+	end
+
+	-- 🎮 direct game responses
+	if msg:find("rivals") then
+		return "Rivals is a PvP shooter focused on aim and movement."
+	end
+
+	if msg:find("tsb") then
+		return "TSB is a fast anime fighting game with combos and movement."
+	end
+
+	if msg:find("jjs") then
+		return "JJS is an anime combat game where timing matters."
+	end
+
+	-- 👋 conversation flow
+	if msg:find("how are you") then
+		return "I'm running fine. What about you?"
+	end
+
+	if msg:find("why") then
+		return "That depends on the situation. What happened?"
+	end
+
+	if msg:find("what") then
+		return "Tell me more so I can understand better."
+	end
+
+	-- 💬 fallback intelligence (no repetition feel)
+	local replies = {
+		"I understand. Continue.",
+		"Go on.",
+		"Interesting... explain more.",
+		"I'm listening.",
+		"That makes sense."
+	}
+
+	return replies[math.random(#replies)]
+end
+
+------------------------------------------------
+-- 🎮 COMMAND SYSTEM
+------------------------------------------------
+local mode = "follow"
+
+local function runCommand(msg)
+	msg = string.lower(msg)
+
+	if msg:find("follow") then
+		mode = "follow"
+		return "Following you."
+
+	elseif msg:find("come") then
+		mode = "come"
+		return "Coming."
+
+	elseif msg:find("stop") then
+		mode = "stop"
+		return "Stopped."
+
+	elseif msg:find("jump") then
+		return "Jump executed."
+
+	elseif msg:find("parkour") then
+		return "Parkour mode enabled."
+	end
+
+	return nil
+end
+
+------------------------------------------------
+-- 🚶 FOLLOW SYSTEM PLACEHOLDER
+------------------------------------------------
+RunService.RenderStepped:Connect(function()
+	-- NPC movement would go here in full version
+end)
+
+------------------------------------------------
+-- 🌐 GLOBAL ACCESS FOR UI
+------------------------------------------------
+_G.KryonAI = aiBrain
+_G.KryonCMD = runCommand
