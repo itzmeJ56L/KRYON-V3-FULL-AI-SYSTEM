@@ -1,0 +1,90 @@
+local Knowledge = {}
+
+Knowledge.Data = {
+
+	rivals = {
+		"Rivals is a fast PvP shooter focused on aim and movement skill.",
+		"It rewards reaction time and positioning."
+	},
+
+	tsb = {
+		"The Strongest Battlegrounds is a fast anime PvP combat game.",
+		"It focuses on combos, movement, and timing."
+	},
+
+	jjs = {
+		"JJS is an anime fighting game based on abilities and combos.",
+		"Timing is very important in fights."
+	},
+
+	grow_a_garden = {
+		"Grow a Garden is a simulator game about farming and upgrades.",
+		"It focuses on progression and resource management."
+	},
+
+	mm2 = {
+		"Murder Mystery 2 is a survival game with murderer, sheriff, and innocents.",
+		"It is about awareness and survival."
+	},
+
+	arsenal = {
+		"Arsenal is a fast FPS where weapons change after kills.",
+		"Aim and movement are key."
+	},
+
+	doors = {
+		"DOORS is a horror survival game with monsters and puzzles.",
+		"Sound and timing matter a lot."
+	},
+
+	blox_fruits = {
+		"Blox Fruits is a grinding RPG with abilities and bosses.",
+		"It is inspired by anime combat systems."
+	},
+
+	jailbreak = {
+		"Jailbreak is a cops vs robbers open world game.",
+		"It was one of Roblox’s most popular classics."
+	},
+
+	adopt_me = {
+		"Adopt Me is a pet trading and roleplay game.",
+		"It became viral because of trading systems."
+	},
+
+	meepcity = {
+		"MeepCity is a social hangout roleplay game.",
+		"It was popular for parties and social gameplay."
+	},
+
+	roblox_classic = {
+		"Old Roblox focused on obbies, building, and simple roleplay.",
+		"Games were simpler but very creative."
+	},
+
+	obby = {
+		"Obbies are obstacle courses based on jumping and timing."
+	},
+
+	parkour = {
+		"Parkour is about movement control and precise jumps."
+	},
+
+	pvp = {
+		"PvP games are about combat skill, positioning, and timing."
+	}
+}
+
+function Knowledge:Get(msg)
+	msg = string.lower(msg)
+
+	for key, list in pairs(self.Data) do
+		if msg:find(key) then
+			return list[math.random(#list)]
+		end
+	end
+
+	return nil
+end
+
+return Knowledge
